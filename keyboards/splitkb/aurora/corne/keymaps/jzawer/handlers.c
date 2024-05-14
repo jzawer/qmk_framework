@@ -271,7 +271,7 @@ void shiftUpHandler(Keypress *kp) {
 //region --MOD_KEYS
 Keypress KP[] = {
     //COLOR           NAME        MASK    LAYER   SKIP_TIME KC        ALT_KC      OS_KC     ALT_OS_KC DOWN_CBACK          UP_CBACK          INTERNAL
-    //─────────────╂───────────╂───────╂──────╂────────╂────────╂──────────╂────────╂────────╂─────────────────╂────────────────╂───────────
+    //─────────────╂───────────╂───────╂────────╂──────────╂────────╂──────────╂────────╂────────╂─────────────────╂────────────────╂───────────
     /*  PINK    */  { M1_MOD,     M1_M,   _M1,    300,      0,        UNDERSC,    0,        0,        &M1DownHandler,     &M1UpHandler,     0, 0, 0, 0 },
     /*  PURPLE  */  { M2_MOD,     M2_M,   _M2,    300,      0,        ES_SCLN,    0,        0,        0,                  &M2UpHandler,     0, 0, 0, 0 },
     /*  RED     */  { M3_MOD,     M3_M,   _M3,    300,      0,        ES_EQL,     0,        0,        0,                  0,                0, 0, 0, 0 },
