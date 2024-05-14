@@ -1,3 +1,25 @@
+To Compile and flash:
+
+Compile on wsl: 
+
+``
+cd qmk_firmware/keyboards/splitkb/aurora/corne/keymaps/jzawer
+``
+``
+qmk compile
+``
+
+Flash keyboard:
+1. move splitkb_aurora_corne_rev1_jzawer_liatris.uf2 to windows, for example:
+``
+cp splitkb_aurora_corne_rev1_jzawer_liatris.uf2 /mnt/c/Users/javie/Downloads/splitkb_aurora_corne_rev1_jzawer_liatris.uf2
+``
+2. reset keyboard parts with buttons (double tap)
+3. move splitkb_aurora_corne_rev1_jzawer_liatris.uf2 inner each part of keyboard
+
+
+
+
 # Aurora Corne's Default Keymap
 _This keymap is a copy of the [Corne default keymap](https://github.com/qmk/qmk_firmware/tree/master/keyboards/crkbd/keymaps/default), with modified OLED code._
 
