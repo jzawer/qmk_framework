@@ -74,6 +74,16 @@ bool before_key_handler(uint16_t keycode, bool down, keyrecord_t *record){
         register_code(KC_LWIN);
         win = 2;
     }
+    //Lazy mod. The alt key is not activated until a second key is pressed.
+    if (down && alt == 1) {
+        register_code(KC_LALT);
+        alt = 2;
+    }
+    //Lazy mod. The alt key is not activated until a second key is pressed.
+    if (down && cmd == 1) {
+        register_code(KC_LCTL);
+        cmd = 2;
+    }
     if (kb_lock) {
         if (down) {
             klog1 = klog2;
@@ -234,6 +244,34 @@ bool M6DownHandler(Keypress *kp) {
     return true;
 }
 
+//fired when alt is pressed
+bool altDownHandler(Keypress *kp) {
+    alt = 1;
+    return true;
+}
+
+//fired when alt is released
+void altUpHandler(Keypress *kp) {
+    if(alt == 2){
+        unregister_code(KC_LALT);
+    }
+    alt = 0;
+}
+
+//fired when command/control is pressed
+bool cmdDownHandler(Keypress *kp) {
+    cmd = 1;
+    return true;
+}
+
+//fired when command/control is released
+void cmdUpHandler(Keypress *kp) {
+    if(cmd == 2){
+        unregister_code(KC_LCTL);
+    }
+    cmd = 0;
+}
+
 //fired when control/window is pressed
 bool ctrDownHandler(Keypress *kp) {
     win = 1;
@@ -279,9 +317,9 @@ Keypress KP[] = {
     /*  BLUE    */  { M5_MOD,     M5_M,   _M5,    300,      0,        ES_DQUO,    0,        0,        0,                  0,                0, 0, 0, 0 },
     /*  LIME    */  { M6_MOD,     M6_M,   _M6,    300,      0,        ES_QUOT,    0,        0,        &M6DownHandler,     0,                0, 0, 0, 0 },
     /*  YELLOW  */  { M7_MOD,     NO_M,   _M7,    300,      0,        ES_PLUS,    0,        0,        0,                  0,                0, 0, 0, 0 },
-    /*  GREY    */  { CMD_MOD,    NO_M,   _MOD,   250,      0,        ES_MINS,    CMD_OS,   0,        0,                  0,                0, 0, 0, 0 },
-    /*  GREY    */  { ALT_MOD,    NO_M,   _MOD,   250,      KC_LALT,  KC_TAB,     0,        0,        0,                  0,                0, 0, 0, 0 },
-    /*  GREY    */  { CTR_MOD,    NO_M,   _MOD,   300,      0,        BCKQT,      0,        0,        &ctrDownHandler,    &ctrUpHandler,    0, 0, 0, 0 },
+    /*  GREY    */  { CMD_MOD,    NO_M,   _MOD,   250,      0,        ES_MINS,    CMD_OS,   0,        &cmdDownHandler,    &cmdUpHandler,    0, 0, 0, 0 },
+    /*  GREY    */  { ALT_MOD,    NO_M,   _MOD,   250,      KC_LALT,  KC_TAB,     0,        0,        &altDownHandler,    &altUpHandler,    0, 0, 0, 0 },
+    /*  GREY    */  { CTR_MOD,    NO_M,   _MOD,   300,      0,        BCKQT,      CTR_OS,   0,        &ctrDownHandler,    &ctrUpHandler,    0, 0, 0, 0 },
     /*  SKY     */  { S1_MOD,     S1_M,   _BASE,  250,      0,        KC_ENT,     0,        0,        &shiftDownHandler,  &shiftUpHandler,  0, 0, 0, 0 },
     /*  ORANGE  */  { TILDE_MOD,  NO_M,   _BASE,  250,      0,        0,          0,        0,        &tildeDownHandler,  0,                0, 0, 0, 0 },
 };
@@ -300,6 +338,7 @@ bool mod_key_handler(uint16_t keycode, bool down, keyrecord_t *record){
     Keypress *currentMod = NULL;
     Keypress *kp = &KP[keycode - FIRST_MODIFIER_INDEX - 1];
     uint8_t iteration = 0;
+    uprintf("Mod key handler: %d\n", keycode - FIRST_MODIFIER_INDEX - 1);
 
     //────────────────── MOD DOWN ──────────────────
     if (down) {
@@ -318,9 +357,9 @@ bool mod_key_handler(uint16_t keycode, bool down, keyrecord_t *record){
         //uprintf("MOD init time is stored\n");
         kp->time = record->event.time;
         if (kp->layer) layer_on(kp->layer);
-        if (kp->keycode || kp->osKeycode) {
+        /*if (kp->keycode || kp->osKeycode) {
             register_code16(kp->osKeycode ? getOSKey(kp->osKeycode) : kp->keycode);
-        }
+        }*/
         if (modsNumber++ == 0) {
             activeMods = kp;
         } else {
@@ -382,9 +421,9 @@ bool mod_key_handler(uint16_t keycode, bool down, keyrecord_t *record){
             layer_off_if_not_used(kp->layer);
         }
 
-        if (kp->keycode || kp->osKeycode) {
+        /*if (kp->keycode || kp->osKeycode) {
             unregister_code16( kp->osKeycode ? getOSKey(kp->osKeycode) : kp->keycode);
-        }
+        }*/
 
         //If the mod key has not been interrupted, then its second behaviour is activated
         //uprintf("MOD has an alternative key?\n");
@@ -416,6 +455,10 @@ bool mod_key_handler(uint16_t keycode, bool down, keyrecord_t *record){
 
                 if (caps_word && abort_caps_word) {
                     set_caps(false, false, true);
+                }
+            } else {
+                if (kp->keycode || kp->osKeycode) {
+                    tap_code16(kp->osKeycode ? getOSKey(kp->osKeycode) : kp->keycode);
                 }
             }
         }

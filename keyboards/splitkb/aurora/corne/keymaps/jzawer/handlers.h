@@ -80,6 +80,8 @@ static unsigned short lastMask = 0;
 
 static uint16_t passive = 0;
 static unsigned char win = 0;  //0 = false, 1 = waiting for second key 2 = active
+static unsigned char alt = 0;  //0 = false, 1 = waiting for second key 2 = active
+static unsigned char cmd = 0;  //0 = false, 1 = waiting for second key 2 = active
 
 static uint16_t delete = 0;  //there are different kinds of deletion (forward, backward, word, line...)
 static uint16_t registered_delete = 0;
